@@ -9,9 +9,13 @@ app.get('/', function(request, response) {
 });
 
 // Function for server to respond on get requests made to '/data' route
-// Sends request to google and returns the response to the client
+// Retrieves the currently stored website and sends it to the client
 app.get('/data', function(request, response) {
   response.send(utils.readWebsite());
+});
+
+app.get('/*', function(request, response) {
+  response.redirect('http://finance.yahoo.com' + request.url);
 });
 
 // Set up server on port 3000
