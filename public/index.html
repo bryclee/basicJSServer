@@ -6,21 +6,21 @@
 <body>
   <script>
     var currentPage = '';
-    var counter = 0;
 
     // Make a request to the data route of the server
     var getNewPage = function() {
       var request = new XMLHttpRequest();
       request.open('get', '/data', true);
       request.onload = function() {
-        document.body.innerHTML = this.response;
+        if (currentPage !== this.responseText) {
+          console.log(this);
+          currentPage = this.responseText;
+          document.body.innerHTML = this.responseText;
+        }
       };
       request.send();
 
-      counter++;
-      if (counter < 10) {
-        window.setTimeout(getNewPage, 5000);
-      }
+      window.setTimeout(getNewPage, 4000);
     };
     getNewPage();
   </script>
