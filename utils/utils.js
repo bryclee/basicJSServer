@@ -3,24 +3,35 @@ module.exports = function() {
   var fs = require('fs');
 
   var WEBSITE_FILE = __dirname + '/../readFile';
+  var websiteName;
   var websiteData;
-  fs.watch(WEBSITE_FILE, function(event, filename) {
-    if (event === 'change') {
-      getWebsiteData(WEBSITE_FILE);
-    }
-  });
+
+  var watcher;
+  if (!watcher) {
+    watcher = fs.watch(WEBSITE_FILE, function(event, filename) {
+      if (event === 'change') {
+        getWebsiteData(WEBSITE_FILE);
+      }
+    });
+  }
 
   var getWebsiteData = function(file) {
     fs.readFile(file, {encoding: 'utf8'}, function(err, data) {
       if (err) {
         throw err;
       } else {
-        console.log(data);
-        http.get(data, function(httpResponse) {
-          collectRequestData(httpResponse, function(htmlData) {
-            websiteData = htmlData;
+        data = data && data.trim();
+        if (data && websiteName !== data) {
+          console.log(data);
+          websiteName = data;
+          var get = http.get(data, function(httpResponse) {
+            collectRequestData(httpResponse, function(htmlData) {
+              websiteData = htmlData;
+            });
+          }).on('error', function(e) {
+            console.log('Server\'s GET request error: ', e, get);
           });
-        });
+        }
       }
     });
   };
